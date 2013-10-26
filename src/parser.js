@@ -8,7 +8,7 @@ EPUBJS.Parser.prototype.container = function(containerXml){
 		var rootfile = containerXml.querySelector("rootfile"),
 			fullpath = rootfile.getAttribute('full-path'),
 			folder = EPUBJS.core.folder(fullpath);
-		console.log("rootfile", containerXml.querySelectorAll("rootfile"));
+
 		//-- Now that we have the path we can parse the contents
 		return {
 			'packagePath' : fullpath,
@@ -45,7 +45,7 @@ EPUBJS.Parser.prototype.package = function(packageXml, baseUrl){
 		'tocPath'  : tocPath,
 		'coverPath': coverPath,
 		'spineNodeIndex' : spineNodeIndex,
-		'spineIndexByURL': spineIndexByURL
+		'spineIndexByURL' : spineIndexByURL
 	};
 }
 
@@ -130,10 +130,12 @@ EPUBJS.Parser.prototype.manifest = function(manifestXml){
 		var id = item.getAttribute('id'),
 			href = item.getAttribute('href') || '',
 			type = item.getAttribute('media-type') || '';
+      properties = item.getAttribute('properties') || '';
 		
 		manifest[id] = {
 			'href' : baseUrl + href, //-- Absolute URL for loading with a web worker
-			'type' : type
+			'type' : type,
+      'properties' : properties
 		};
 	
 	});
@@ -151,16 +153,15 @@ EPUBJS.Parser.prototype.spine = function(spineXml, manifest){
 	//-- Add to array to mantain ordering and cross reference with manifest
 	items.forEach(function(item, index){
 		var Id = item.getAttribute('idref');
-		
+	
 		var vert = {
 			'id' : Id,
 			'linear' : item.getAttribute('linear') || '',
-			'properties' : item.getAttribute('properties') || '',
+			'properties' : manifest[Id].properties || '',
 			'href' : manifest[Id].href,
 			'index' : index
 		}
 		
-	
 		spine.push(vert);
 	});
 	
@@ -185,9 +186,9 @@ EPUBJS.Parser.prototype.toc = function(tocXml){
 
 		while(iter--){
 			node = nodesArray[iter];
-				if(node.nodeName === "navPoint") {
-					items.push(node);
-				}
+		  	if(node.nodeName === "navPoint") {
+		  		items.push(node);
+		  	}
 		}
 		
 		items.forEach(function(item){
