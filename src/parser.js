@@ -8,7 +8,7 @@ EPUBJS.Parser.prototype.container = function(containerXml){
 		var rootfile = containerXml.querySelector("rootfile"),
 			fullpath = rootfile.getAttribute('full-path'),
 			folder = EPUBJS.core.folder(fullpath);
-
+		console.log("rootfile", containerXml.querySelectorAll("rootfile"));
 		//-- Now that we have the path we can parse the contents
 		return {
 			'packagePath' : fullpath,
@@ -45,7 +45,7 @@ EPUBJS.Parser.prototype.package = function(packageXml, baseUrl){
 		'tocPath'  : tocPath,
 		'coverPath': coverPath,
 		'spineNodeIndex' : spineNodeIndex,
-		'spineIndexByURL' : spineIndexByURL
+		'spineIndexByURL': spineIndexByURL
 	};
 }
 
@@ -185,9 +185,9 @@ EPUBJS.Parser.prototype.toc = function(tocXml){
 
 		while(iter--){
 			node = nodesArray[iter];
-		  	if(node.nodeName === "navPoint") {
-		  		items.push(node);
-		  	}
+				if(node.nodeName === "navPoint") {
+					items.push(node);
+				}
 		}
 		
 		items.forEach(function(item){
